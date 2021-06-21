@@ -72,9 +72,9 @@ public class Ab3Impl implements Ab3 {
 
 	 private int findElement(int [][] adjacencyCostMatrix, int searchStartingVertex) {
 
-		if (searchStartingVertex == null || adjacencyCostMatrix == null) return null;
+		//if (searchStartingVertex == null || adjacencyCostMatrix == null) return null;
 
-		for (int rowIndex = 0; rowIndex < array.length; rowIndex++ ) {
+		for (int rowIndex = 0; rowIndex < adjacencyCostMatrix.length; rowIndex++ ) {
 			int[] row = adjacencyCostMatrix[rowIndex];
 			if (row != null) {
 				for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
@@ -83,7 +83,7 @@ public class Ab3Impl implements Ab3 {
 					}
 				}
 			}
-		}кидай
+		}
 		return -1;
 	}
 
@@ -91,12 +91,12 @@ public class Ab3Impl implements Ab3 {
 	@Override
 	public byte[] lzwEncode(byte[] data, int bits) {
 		// YOUR CODE HERE
-		return null;
+		return LzwCodec.encode(data, bits);
 	}
 
 	@Override
 	public byte[] lzwDecode(byte[] data, int bits) {
 		// YOUR CODE HERE
-		return null;
+		return LzwCodec.decode(data, bits);
 	}
 }
