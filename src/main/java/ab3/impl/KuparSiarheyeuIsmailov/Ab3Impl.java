@@ -64,28 +64,14 @@ public class Ab3Impl implements Ab3 {
 
 	@Override
 	public int farthestVertex(int startingVertex, int[][] adjacencyCostMatrix) {
-
+		Dijkstra d = new Dijkstra(adjacencyCostMatrix);
 
 		// YOUR CODE HERE
-		return -1;
+		return d.getFarthestVertexDistance(startingVertex);
 	}
 
-	 private int findElement(int [][] adjacencyCostMatrix, int searchStartingVertex) {
 
-		//if (searchStartingVertex == null || adjacencyCostMatrix == null) return null;
 
-		for (int rowIndex = 0; rowIndex < adjacencyCostMatrix.length; rowIndex++ ) {
-			int[] row = adjacencyCostMatrix[rowIndex];
-			if (row != null) {
-				for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
-					if (searchStartingVertex == row[columnIndex]) {
-						return adjacencyCostMatrix[rowIndex][columnIndex];
-					}
-				}
-			}
-		}
-		return -1;
-	}
 
 
 	@Override
