@@ -36,8 +36,6 @@ public class Ab3Test {
             int[] preorder = preorder(t);
 
             Tree reconstructed = ab3Impl.reconstructTree(inorder, preorder);
-//            System.out.println("inorder: " + Arrays.toString(inorder)
-//                    + "\npreorder: " + Arrays.toString(preorder));
             assertTreeEquals(t.root, reconstructed.root);
         }
     }

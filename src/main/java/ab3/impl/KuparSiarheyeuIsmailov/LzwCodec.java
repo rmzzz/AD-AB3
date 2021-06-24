@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * LZW Codec
+ * LZW Codec using LSB first packing order
  */
 public class LzwCodec {
     static final boolean DEBUG = true;
@@ -88,10 +88,20 @@ public class LzwCodec {
         for (int i = 0; i < outLength; i++) {
             code |= out[i] << bitsOffset;
 
+            if(DEBUG) {
+                System.out.printf("%d) out=%s -> code=%s \n",
+                        i, Integer.toBinaryString(out[i]), Integer.toBinaryString(code));
+            }
+
             while (bitsOffset + 8 <= bits) {
                 encoded[encIdx++] = (byte)(code & 0xFF);
                 code >>= 8;
                 bitsOffset += 8;
+                if(DEBUG) {
+                    System.out.printf(" => wrote: %s -> code=%s \n",
+                            Integer.toBinaryString(encoded[encIdx-1]), Integer.toBinaryString(code));
+                }
+
             }
             bitsOffset = bits - bitsOffset;
         }
