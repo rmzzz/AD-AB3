@@ -13,6 +13,18 @@ class LzwCodecTest {
     void encode() {
     }
 
+    @Test
+    public void testLzwCompressed16bit()
+    {
+        byte[] input = "ababcbababaaaaad".getBytes();
+        System.out.println("inp: " + toBits(input));
+        byte[] encoded = LzwCodec.encode(input, 16);
+        System.out.println("enc: " + toBits(encoded));
+        byte[] decoded = LzwCodec.decode(encoded, 16);
+        System.out.println("dec: " + toBits(decoded));
+        assertArrayEquals(input, decoded);
+    }
+
     /**
      * An example: Assume codeword 1100110011 is emitted first, and
 	 * then codeword 1010101010 is output afterwards, (codeword length
@@ -127,7 +139,24 @@ class LzwCodecTest {
     }
 
     @Test
+    void decodeBits10bit12345() {
+        int[] test = {0, 1, 2, 3, 4, 5};
+        System.out.println("test: " + toBits(test, 10));
+        byte[] enc = LzwCodec.encodeBits(test, 10);
+        System.out.println("enc: " + toBits(enc));
+        int[] dec = LzwCodec.decodeBits(enc, 10);
+        System.out.println("dec: " + toBits(dec, 10));
+        assertArrayEquals(test, dec);
+    }
+
+    @Test
     void decode() {
+
+        // yields 10 codewords as output (97 98 257 99 258 261 97 263 263 100).
+        byte[] exp = "ababcbababaaaaad".getBytes();
+        byte[] enc = { 97, 0, 98, 0, 1, 1, 99, 0, 2, 1, 5, 1, 97, 0, 7, 1, 7, 1, 100, 0 };
+        byte[] dec = LzwCodec.decode(enc, 16);
+        assertArrayEquals(exp, dec);
     }
 
     String toBits(byte[] array) {
