@@ -13,6 +13,41 @@ class LzwCodecTest {
     void encode() {
     }
 
+    /**
+     * An example: Assume codeword 1100110011 is emitted first, and
+	 * then codeword 1010101010 is output afterwards, (codeword length
+	 * 10bit, so 20bits total). Represented as a bitstring (lowest value
+	 * bit on the right), this would yield 10101010101100110011. To get
+	 * full bytes, several leading zeros must be added ("padding"). This
+	 * would result in 000010101010101100110011, exactly 24bit. Converting
+	 * this into a byte array, we would have byte 0 = [00110011], byte 1 =
+     * [10101011], byte 2 = [00001010] (byte 0 thus contains the eight
+	 * lowest value bits, byte 1 the next eight, and so on).
+     */
+    @Test
+    void encodeBitsExampleFromAb3() {
+        int[] out = {0b1100110011, 0b1010101010};
+        byte[] test = {0b00110011, (byte)0b10101011, 0b00001010};
+        System.out.println("out: " + toBits(out, 10));
+        System.out.println("tst: " + toBits(test));
+        byte[] enc = LzwCodec.encodeBits(out, 10);
+        System.out.println(Arrays.toString(enc));
+        System.out.println("enc: " + toBits(enc));
+        assertArrayEquals(test, enc);
+    }
+
+    @Test
+    void decodeBitsExampleFromAb3() {
+        int[] out = {0b1100110011, 0b1010101010};
+        byte[] test = {0b00110011, (byte)0b10101011, 0b00001010};
+        System.out.println("out: " + toBits(out, 10));
+        System.out.println("test: " + toBits(test));
+        int[] dec = LzwCodec.decodeBits(test, 10);
+        System.out.println("dec: " + toBits(dec, 10));
+        assertArrayEquals(out, dec);
+
+    }
+
     @Test
     void encodeBits16bit() {
         assertArrayEquals(
@@ -72,19 +107,22 @@ class LzwCodecTest {
     @Test
     void decodeBits10bit123() {
         int[] test = {1, 2, 3};
-        System.out.println("test: " + toBits(test, 0b11111_11111));
+        System.out.println("src: " + toBits(test, 10));
         byte[] enc = LzwCodec.encodeBits(test, 10);
         System.out.println("enc: " + toBits(enc));
         int[] dec = LzwCodec.decodeBits(enc, 10);
-        System.out.println("dec: " + toBits(dec, 0b11111_11111));
+        System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(test, dec);
     }
 
     @Test
     void decodeBits10bit1234() {
         int[] test = {1, 2, 3, 4};
+        System.out.println("test: " + toBits(test, 10));
         byte[] enc = LzwCodec.encodeBits(test, 10);
+        System.out.println("enc: " + toBits(enc));
         int[] dec = LzwCodec.decodeBits(enc, 10);
+        System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(test, dec);
     }
 
@@ -93,17 +131,23 @@ class LzwCodecTest {
     }
 
     String toBits(byte[] array) {
-        StringBuilder sb = new StringBuilder();
-        for(byte b : array) {
-            sb.append(Integer.toBinaryString(b & 0xFF));
-            sb.append(' ');
+        int[] a = new int[array.length];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = 0xFF & array[i];
         }
-        return sb.toString();
+        return toBits(a, 8);
     }
-    String toBits(int[] array, int mask) {
+    String toBits(int[] array, int bits) {
+        int mask = (1 << bits) - 1;
+
         StringBuilder sb = new StringBuilder();
         for(int i : array) {
-            sb.append(Integer.toBinaryString(i & mask));
+            String s = Integer.toBinaryString(i & mask);
+            int len = s.length();
+            for(int j = len; j < bits; j++) {
+                sb.append('0');
+            }
+            sb.append(s);
             sb.append(' ');
         }
         return sb.toString();

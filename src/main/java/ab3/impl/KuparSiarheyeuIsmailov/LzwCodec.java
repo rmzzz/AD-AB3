@@ -78,6 +78,13 @@ public class LzwCodec {
     static byte[] encodeBits(int[] out, int bits) {
         return encodeBits(out, out.length, bits);
     }
+
+    /**
+     * e.g.
+     *  bits = 10
+     *  out = {1100110011, 1010101010}
+     *  returns {00110011, 10101011, 00001010}
+     */
     static byte[] encodeBits(int[] out, int outLength, int bits) {
         int totalBits = outLength * bits;
         int totalBytes = (totalBits + 7) / 8;
@@ -99,14 +106,20 @@ public class LzwCodec {
                 bitsOffset += 8;
                 if(DEBUG) {
                     System.out.printf(" => wrote: %s -> code=%s \n",
-                            Integer.toBinaryString(encoded[encIdx-1]), Integer.toBinaryString(code));
+                            Integer.toBinaryString(0xFF & encoded[encIdx-1]),
+                            Integer.toBinaryString(code));
                 }
-
             }
-            bitsOffset = bits - bitsOffset;
+            bitsOffset = (bitsOffset + bits) % 8;
         }
-        if(bitsOffset > 0) {
-            encoded[encIdx] = (byte)(code & 0xFF);
+        while(code > 0) {
+            encoded[encIdx++] = (byte)(code & 0xFF);
+            code >>= 8;
+            if(DEBUG) {
+                System.out.printf(" => wrote: %s -> code=%s \n",
+                        Integer.toBinaryString(0xFF & encoded[encIdx-1]),
+                        Integer.toBinaryString(code));
+            }
         }
         if(DEBUG)
             System.out.println("debug: encoded: " + Arrays.toString(encoded));
