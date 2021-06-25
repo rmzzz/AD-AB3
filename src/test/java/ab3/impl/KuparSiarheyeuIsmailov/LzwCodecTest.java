@@ -164,12 +164,11 @@ class LzwCodecTest {
     @Disabled("for local use only! too heavy for automation")
     @Test
     void encodeDecodeWithResetCodeTable() {
-        int bits = 10;
+        int bits = 9;
         int beyondMax = (1 << bits);
-        byte[] src = new byte[beyondMax*2];
-        Random rnd = new Random(System.currentTimeMillis());
+        byte[] src = new byte[beyondMax];
         for(int i = 0; i < src.length; i++) {
-            src[i] = (byte)('a' + rnd.nextInt(26));
+            src[i] = (byte)(0xFF & i);
         }
         //Arrays.setAll(src, i -> i);//fill(src, (byte)'a');
         //src[1] = 'b';
@@ -181,6 +180,8 @@ class LzwCodecTest {
 
         byte[] dec = LzwCodec.decode(enc, bits);
         System.out.println("dec: " + toBits(dec));
+        System.out.println("src: " + new String(src));
+        System.out.println("dec: " + new String(dec));
         assertArrayEquals(src, dec);
     }
 

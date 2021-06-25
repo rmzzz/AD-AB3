@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * LZW Codec using LSB first packing order
  */
 public class LzwCodec {
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
     static final boolean TRACE = false;
 
     protected static class PrefixSuffixPair {
@@ -189,11 +189,10 @@ public class LzwCodec {
                     debug("reset at i=%d; nextCode=%d\n", i, nextCode);
                     nextCode = TranslationTable.FIRST_CODE;
                     // reset cached pref as well: sfx is read, but pref can refer to reset index
-                    out.write(pref);
-                    pref = sfx;
-                    continue;
+                    //continue;
+                } else {
+                    table.put(pair, nextCode++);
                 }
-                table.put(pair, nextCode++);
                 out.write(pref);
                 pref = sfx;
             }
@@ -296,7 +295,6 @@ public class LzwCodec {
         // see VO 11-74
         TranslationTable tTab = new TranslationTable(input.length); ///< should not have more codes than input length
         ByteArrayBuffer out = new ByteArrayBuffer(input.length);
-        int outIdx = 0;
         int oldCode = input[0];
         out.write(oldCode);
         for (int i = 1; i < input.length; i++) {
