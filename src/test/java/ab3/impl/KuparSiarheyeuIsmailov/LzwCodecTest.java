@@ -1,8 +1,10 @@
 package ab3.impl.KuparSiarheyeuIsmailov;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -159,6 +161,71 @@ class LzwCodecTest {
         assertArrayEquals(exp, dec);
     }
 
+    @Disabled("for local use only! too heavy for automation")
+    @Test
+    void encodeDecodeWithResetCodeTable() {
+        int bits = 10;
+        int beyondMax = (1 << bits);
+        byte[] src = new byte[beyondMax*2];
+        Random rnd = new Random(System.currentTimeMillis());
+        for(int i = 0; i < src.length; i++) {
+            src[i] = (byte)('a' + rnd.nextInt(26));
+        }
+        //Arrays.setAll(src, i -> i);//fill(src, (byte)'a');
+        //src[1] = 'b';
+        //src[2] = 'c';
+        System.out.println("src: " + toBits(src));
+
+        byte[] enc = LzwCodec.encode(src, bits);
+        System.out.println("enc: " + toBits(enc));
+
+        byte[] dec = LzwCodec.decode(enc, bits);
+        System.out.println("dec: " + toBits(dec));
+        assertArrayEquals(src, dec);
+    }
+
+    @Test
+    @Disabled("for local use only! too heavy for automation")
+    void encodeDecodeRandomCharactersAllBitsRange() {
+        int minBits = 10; ///< 8 bits makes no sense
+        int maxBits = 16; ///< 17 bits can overflow 32bit int!
+        int minArrayLength = 0;
+        int maxArrayLength = 4096;
+
+        Random rnd = new Random(System.currentTimeMillis());
+
+        for(int bits = minBits; bits <= maxBits; bits++) {
+
+            for(int size = minArrayLength; size <= maxArrayLength; size++){
+                byte[] src = new byte[size];
+                for(int i = 0; i < size; i++) {
+                    src[i] = (byte)('a' + rnd.nextInt(26));
+                }
+
+                try {
+                    byte[] enc = LzwCodec.encode(src, bits);
+//                    System.out.println("bits: " + bits + "; size: " + size);
+//                    System.out.println("src: " + toBits(src));
+//                    System.out.println("enc: " + toBits(enc));
+
+                    byte[] dec = LzwCodec.decode(enc, bits);
+//                    System.out.println("dec: " + toBits(dec));
+
+                    if (!Arrays.equals(src, dec)) {
+                        System.out.println("bits: " + bits + "; size: " + size);
+                        System.out.println("src: " + toBits(src));
+                        System.out.println("enc: " + toBits(enc));
+                        System.out.println("dec: " + toBits(dec));
+                        assertArrayEquals(src, dec,
+                                "with bits=" + bits + " and size=" + size + " decoded array not equal to source!");
+                    }
+                } catch (RuntimeException ex) {
+                    fail("Error with bits=" + bits + " and size=" + size , ex);
+                }
+            }
+        }
+    }
+
     String toBits(byte[] array) {
         int[] a = new int[array.length];
         for (int i = 0; i < a.length; i++) {
@@ -169,15 +236,27 @@ class LzwCodecTest {
     String toBits(int[] array, int bits) {
         int mask = (1 << bits) - 1;
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder((1+array.length)*bits);
+        sb.append('[').append(array.length).append(']');
+        // print positions
+        sb.append('\n');
+        for( int i = 0; i < array.length; i++) {
+            String s = Integer.toString(i);
+            sb.append(' ');
+            sb.append(s);
+            for(int j = s.length(); j < bits; j++) {
+                sb.append(' ');
+            }
+        }
+        // print values
+        sb.append('\n');
         for(int i : array) {
+            sb.append(' ');
             String s = Integer.toBinaryString(i & mask);
-            int len = s.length();
-            for(int j = len; j < bits; j++) {
+            for(int j = s.length(); j < bits; j++) {
                 sb.append('0');
             }
             sb.append(s);
-            sb.append(' ');
         }
         return sb.toString();
     }
