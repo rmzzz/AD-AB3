@@ -12,18 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class LzwCodecTest {
 
     @Test
-    void encode() {
-    }
-
-    @Test
     public void testLzwCompressed16bit()
     {
         byte[] input = "ababcbababaaaaad".getBytes();
-        System.out.println("inp: " + toBits(input));
+        //System.out.println("inp: " + toBits(input));
         byte[] encoded = LzwCodec.encode(input, 16);
-        System.out.println("enc: " + toBits(encoded));
+        //System.out.println("enc: " + toBits(encoded));
         byte[] decoded = LzwCodec.decode(encoded, 16);
-        System.out.println("dec: " + toBits(decoded));
+        //System.out.println("dec: " + toBits(decoded));
         assertArrayEquals(input, decoded);
     }
 
@@ -42,11 +38,11 @@ class LzwCodecTest {
     void encodeBitsExampleFromAb3() {
         int[] out = {0b1100110011, 0b1010101010};
         byte[] test = {0b00110011, (byte)0b10101011, 0b00001010};
-        System.out.println("out: " + toBits(out, 10));
-        System.out.println("tst: " + toBits(test));
+        //System.out.println("out: " + toBits(out, 10));
+        //System.out.println("tst: " + toBits(test));
         byte[] enc = LzwCodec.encodeBits(out, 10);
-        System.out.println(Arrays.toString(enc));
-        System.out.println("enc: " + toBits(enc));
+        //System.out.println(Arrays.toString(enc));
+        //System.out.println("enc: " + toBits(enc));
         assertArrayEquals(test, enc);
     }
 
@@ -54,10 +50,10 @@ class LzwCodecTest {
     void decodeBitsExampleFromAb3() {
         int[] out = {0b1100110011, 0b1010101010};
         byte[] test = {0b00110011, (byte)0b10101011, 0b00001010};
-        System.out.println("out: " + toBits(out, 10));
-        System.out.println("test: " + toBits(test));
+        //System.out.println("out: " + toBits(out, 10));
+        //System.out.println("test: " + toBits(test));
         int[] dec = LzwCodec.decodeBits(test, 10);
-        System.out.println("dec: " + toBits(dec, 10));
+        //System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(out, dec);
 
     }
@@ -86,9 +82,9 @@ class LzwCodecTest {
     @Test
     void encodeBits10bit2x() {
         byte[] test = {0b010_10101, 0b0_11111_01, 0};
-        System.out.println(Arrays.toString(test));
+        //System.out.println(Arrays.toString(test));
         byte[] encoded = LzwCodec.encodeBits(new int[]{0b01010_10101, 0b00000_11111}, 10);
-        System.out.println(Arrays.toString(encoded));
+        //System.out.println(Arrays.toString(encoded));
         assertArrayEquals(
                 // 01|010_10101 00000_11111
                 test, encoded);
@@ -121,33 +117,33 @@ class LzwCodecTest {
     @Test
     void decodeBits10bit123() {
         int[] test = {1, 2, 3};
-        System.out.println("src: " + toBits(test, 10));
+        //System.out.println("src: " + toBits(test, 10));
         byte[] enc = LzwCodec.encodeBits(test, 10);
-        System.out.println("enc: " + toBits(enc));
+        //System.out.println("enc: " + toBits(enc));
         int[] dec = LzwCodec.decodeBits(enc, 10);
-        System.out.println("dec: " + toBits(dec, 10));
+        //System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(test, dec);
     }
 
     @Test
     void decodeBits10bit1234() {
         int[] test = {1, 2, 3, 4};
-        System.out.println("test: " + toBits(test, 10));
+        //System.out.println("test: " + toBits(test, 10));
         byte[] enc = LzwCodec.encodeBits(test, 10);
-        System.out.println("enc: " + toBits(enc));
+        //System.out.println("enc: " + toBits(enc));
         int[] dec = LzwCodec.decodeBits(enc, 10);
-        System.out.println("dec: " + toBits(dec, 10));
+        //System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(test, dec);
     }
 
     @Test
     void decodeBits10bit12345() {
         int[] test = {0, 1, 2, 3, 4, 5};
-        System.out.println("test: " + toBits(test, 10));
+        //System.out.println("test: " + toBits(test, 10));
         byte[] enc = LzwCodec.encodeBits(test, 10);
-        System.out.println("enc: " + toBits(enc));
+        //System.out.println("enc: " + toBits(enc));
         int[] dec = LzwCodec.decodeBits(enc, 10);
-        System.out.println("dec: " + toBits(dec, 10));
+        //System.out.println("dec: " + toBits(dec, 10));
         assertArrayEquals(test, dec);
     }
 
@@ -173,15 +169,15 @@ class LzwCodecTest {
         //Arrays.setAll(src, i -> i);//fill(src, (byte)'a');
         //src[1] = 'b';
         //src[2] = 'c';
-        System.out.println("src: " + toBits(src));
+        //System.out.println("src: " + toBits(src));
 
         byte[] enc = LzwCodec.encode(src, bits);
-        System.out.println("enc: " + toBits(enc));
+        //System.out.println("enc: " + toBits(enc));
 
         byte[] dec = LzwCodec.decode(enc, bits);
-        System.out.println("dec: " + toBits(dec));
-        System.out.println("src: " + new String(src));
-        System.out.println("dec: " + new String(dec));
+        //System.out.println("dec: " + toBits(dec));
+        //System.out.println("src: " + new String(src));
+        //System.out.println("dec: " + new String(dec));
         assertArrayEquals(src, dec);
     }
 
@@ -205,18 +201,18 @@ class LzwCodecTest {
 
                 try {
                     byte[] enc = LzwCodec.encode(src, bits);
-//                    System.out.println("bits: " + bits + "; size: " + size);
-//                    System.out.println("src: " + toBits(src));
-//                    System.out.println("enc: " + toBits(enc));
+//                    //System.out.println("bits: " + bits + "; size: " + size);
+//                    //System.out.println("src: " + toBits(src));
+//                    //System.out.println("enc: " + toBits(enc));
 
                     byte[] dec = LzwCodec.decode(enc, bits);
-//                    System.out.println("dec: " + toBits(dec));
+//                    //System.out.println("dec: " + toBits(dec));
 
                     if (!Arrays.equals(src, dec)) {
-                        System.out.println("bits: " + bits + "; size: " + size);
-                        System.out.println("src: " + toBits(src));
-                        System.out.println("enc: " + toBits(enc));
-                        System.out.println("dec: " + toBits(dec));
+                        //System.out.println("bits: " + bits + "; size: " + size);
+                        //System.out.println("src: " + toBits(src));
+                        //System.out.println("enc: " + toBits(enc));
+                        //System.out.println("dec: " + toBits(dec));
                         assertArrayEquals(src, dec,
                                 "with bits=" + bits + " and size=" + size + " decoded array not equal to source!");
                     }

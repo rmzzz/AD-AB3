@@ -36,6 +36,7 @@ public class Ab3Impl implements Ab3 {
 	Node reconstructNode(int[] inorder, int iFrom, int iTo, int[] preorder, int pFrom, int pTo) {
 		if (pFrom < 0 || pTo < 0 || pTo >= preorder.length || iFrom > iTo || pFrom > pTo)
 			return null;
+
 		int key = preorder[pFrom];
 		Node node = new Node();
 		node.key = key;
@@ -46,14 +47,13 @@ public class Ab3Impl implements Ab3 {
 		node.left = reconstructNode(inorder, iFrom, posInorderRoot - 1,
 				preorder, pFrom + 1, pFrom + leftSize);
 
-		//int rightSize = iTo - posInorderRoot;
 		node.right = reconstructNode(inorder, posInorderRoot + 1, iTo,
 				preorder, pFrom + leftSize + 1, pTo);
 
 		return node;
 	}
 
-	int indexOf(int key, int[] array, int from, int to) {
+	static int indexOf(int key, int[] array, int from, int to) {
 		for (int i = from; i <= to; i++) {
 			if (array[i] == key) {
 				return i;
@@ -69,9 +69,6 @@ public class Ab3Impl implements Ab3 {
 		// YOUR CODE HERE
 		return d.getFarthestVertexDistance(startingVertex);
 	}
-
-
-
 
 
 	@Override

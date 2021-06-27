@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * LZW Codec using LSB first packing order
  */
 public class LzwCodec {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
     static final boolean TRACE = false;
 
     protected static class PrefixSuffixPair {
@@ -189,7 +189,6 @@ public class LzwCodec {
                     debug("reset at i=%d; nextCode=%d\n", i, nextCode);
                     nextCode = TranslationTable.FIRST_CODE;
                     // reset cached pref as well: sfx is read, but pref can refer to reset index
-                    //continue;
                 } else {
                     table.put(pair, nextCode++);
                 }
@@ -205,24 +204,20 @@ public class LzwCodec {
         return encodeBits(out.toArray(), bits);
     }
 
-    static byte[] encodeBits(int[] out, int bits) {
-        return encodeBits(out, out.length, bits);
-    }
-
     /**
      * e.g.
      * bits = 10
      * out = {1100110011, 1010101010}
      * returns {00110011, 10101011, 00001010}
      */
-    static byte[] encodeBits(int[] out, int outLength, int bits) {
-        int totalBits = outLength * bits;
+    static byte[] encodeBits(int[] out, int bits) {
+        int totalBits = out.length * bits;
         int totalBytes = (totalBits + 7) / 8;
         byte[] encoded = new byte[totalBytes];
         int encIdx = 0;
         int bitsOffset = 0;
         int code = 0;
-        for (int i = 0; i < outLength; i++) {
+        for (int i = 0; i < out.length; i++) {
             code |= out[i] << bitsOffset;
 
             if (TRACE) {
@@ -242,8 +237,8 @@ public class LzwCodec {
                             Integer.toBinaryString(code), bitsOffset);
                 }
             }
-            //bitsOffset = (bitsOffset + bits) % 8;
         }
+
         while (bitsOffset > 0) {
             encoded[encIdx++] = (byte) (code & 0xFF);
             code >>= 8;
@@ -255,7 +250,9 @@ public class LzwCodec {
             }
         }
 
-        debug("encoded bits: %s", encoded);
+        if(DEBUG) {
+            debug("encoded bits: %s", Arrays.toString(encoded));
+        }
 
         return encoded;
     }
@@ -321,13 +318,13 @@ public class LzwCodec {
 
     private static void debug(String msg, Object... params) {
         if (DEBUG) {
-            System.out.printf("debug: " + msg + "\n", params);
+            //System.out.printf("debug: " + msg + "\n", params);
         }
     }
 
     private static void trace(String msg, Object... params) {
         if (TRACE && DEBUG) {
-            System.out.printf("trace: " + msg + "\n", params);
+            //System.out.printf("trace: " + msg + "\n", params);
         }
     }
 }
